@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Glamour Service — Área do Cliente</title>
+
+<style>
+  /* ---------- Header / Footer styles (from index) ---------- */
+  body {
+    margin: 0;
+    font-family: Inter, Arial, sans-serif;
+    background: linear-gradient(180deg,#070708 0%, #0b0b0c 100%);
+    color: #eee;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 30px;
+    background-color: rgba(0,0,0,0.7);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-sizing: border-box;
+  }
+  header img { max-height: 70px; max-width: 170px; }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    max-width: 60%;
+    justify-content: flex-end;
+  }
+
+  nav a {
+    font-size: 15px;
+    text-decoration: none;
+    color: #d4af37;
+    font-weight: bold;
+    transition:.3s;
+    white-space: nowrap;
+  }
+  nav a:hover { color:#ff0000; }
+
+  #menuBtn {
+    display:none;
+    background:transparent;
+    border:1px solid rgba(212,175,55,0.4);
+    color:#d4af37;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+  }
+
+  /* small responsive for header */
+  @media(max-width:900px){
+      nav{gap:10px;max-width:55%;}
+      nav a{font-size:14px;}
+      header img{max-height:55px;}
+  }
+
+  /* ---------- Original Area do Cliente styles (kept intact) ---------- */
+  :root{
+    --bg:#0f0f10;
+    --card:#111214;
+    --muted:#bdbdbd;
+    --accent:#d4af37; /* dourado */
+    --accent-700:#b88f2a;
+    --glass: rgba(255,255,255,0.03);
+    --success:#28a745;
+    --danger:#dc3545;
+    --radius:12px;
+    --maxwidth:1100px;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#070708 0%, #0b0b0c 100%);color:#eee}
+  .wrap{max-width:var(--maxwidth);margin:28px auto;padding:24px;box-sizing:border-box;}
+  /* note: header class below is for original brand header inside .wrap — its selector doesn't conflict with page header */
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-700));
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:#111;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,0.5);
+  }
+  h1{font-size:18px;margin:0}
+  .sub{color:var(--muted);font-size:13px}
+
+  /* Dashboard cards */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,0.5);min-height:88px}
+  .card .num{font-size:20px;font-weight:700}
+  .card .label{color:var(--muted);font-size:13px;margin-top:6px}
+
+  /* Layout */
+  .main{display:grid;grid-template-columns: 1fr 420px;gap:18px;}
+  @media (max-width:980px){ .main{grid-template-columns:1fr} .cards{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:600px){ .cards{grid-template-columns:1fr} .brand-container{flex-direction:column;align-items:flex-start;} }
+
+  /* Panels */
+  .panel{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 8px 28px rgba(0,0,0,0.45);}
+  .panel h2{margin:0 0 12px 0;font-size:16px}
+  .list{display:flex;flex-direction:column;gap:10px}
+  .event-row, .contract-row, .quote-row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.02)}
+  .small{font-size:13px;color:var(--muted)}
+  .status {padding:6px 10px;border-radius:999px;font-weight:600;font-size:13px}
+  .status.confirmado{background:rgba(40,167,69,0.12);color:var(--success);border:1px solid rgba(40,167,69,0.12)}
+  .status.negociacao{background:rgba(255,193,7,0.08);color:#ffc107;border:1px solid rgba(255,193,7,0.08)}
+  .status.cancelado{background:rgba(220,53,69,0.08);color:var(--danger)}
+  .btn{appearance:none;border:0;padding:8px 12px;border-radius:8px;background:var(--accent);color:#111;font-weight:600;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
+  .actions{display:flex;gap:8px;align-items:center}
+
+  /* Table-like lists */
+  .col{min-width:0;flex:1}
+  .muted{color:var(--muted)}
+
+  /* Modal */
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:80}
+  .modal{background:#0f0f12;border-radius:12px;padding:18px;max-width:800px;width:100%;box-shadow:0 18px 48px rgba(0,0,0,0.6);color:#fff}
+  .modal header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .close{background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:18px}
+
+  footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+  a.fake{color:var(--muted);text-decoration:underline;cursor:pointer}
+
+  /* Rodapé */
+    footer{
+        background:#000;
+        text-align:center;
+        padding:30px 20px;
+        margin-top:40px;
+    }
+    footer img{
+        max-width:140px;
+        margin-bottom:10px;
+    }
+    footer p{margin:6px 0;color:#ccc;}
+
+    @media(max-width:900px){
+        nav{gap:10px;max-width:55%;}
+        nav a{font-size:14px;}
+        header img{max-height:55px;}
+    }
+
+</style>
+</head>
+<body>
+
+  <header>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+    <button id="menuBtn">☰ Menu</button>
+    <nav id="mainNav">
+        <a href="{{ url_for('index') }}">Home</a>
+         <a href="{{ url_for('index') }}" style="color: red;">Sair</a>
+    </nav>
+  </header>
+
+    <header class="brand-container" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div class="brand" aria-hidden="false">
+        <div class="logo" aria-hidden="true">GS</div>
+        <div>
+          <h1>Glamour Service — Área do Cliente</h1>
+          <div class="sub">Painel pessoal • acompanhe eventos, contratos e orçamentos</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="sub">Olá, <strong id="clientName">Cliente</strong></div>
+        <button class="btn" id="btnNewQuote">Solicitar Orçamento</button>
+      </div>
+    </header>
+
+    <section class="cards" aria-label="Resumos">
+      <div class="card" role="region" aria-label="Eventos ativos">
+        <div class="num" id="numEvents">0</div>
+        <div class="label">Eventos ativos</div>
+      </div>
+      <div class="card" role="region" aria-label="Orçamentos">
+        <div class="num" id="numQuotes">0</div>
+        <div class="label">Orçamentos realizados</div>
+      </div>
+      <div class="card" role="region" aria-label="Contratos">
+        <div class="num" id="numContracts">0</div>
+        <div class="label">Contratos (ativos / finalizados)</div>
+      </div>
+    </section>
+
+    <div class="main">
+      
+      <div>
+        <div class="panel" style="margin-bottom:14px">
+          <h2>📌 Meus Eventos</h2>
+          <div class="list" id="eventsList" aria-live="polite">
+          
+          </div>
+          <div style="margin-top:12px;text-align:right">
+            <a class="fake" id="viewAllEvents">Ver todos os eventos</a>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>💰 Orçamentos</h2>
+          <div class="list" id="quotesList" aria-live="polite">
+          
+          </div>
+          <div style="margin-top:12px;text-align:right">
+            <a class="fake" id="viewAllQuotes">Ver todos os orçamentos</a>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="panel">
+          <h2>📄 Contratos</h2>
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <button class="btn" data-tab="ativos" id="tabAtivos">Ativos</button>
+            <button class="btn ghost" data-tab="finalizados" id="tabFinalizados">Finalizados</button>
+          </div>
+          <div class="list" id="contractsList" aria-live="polite">
+          
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="panel" style="text-align:center">
+          <h2>Status rápido</h2>
+          <div class="small muted" style="margin-bottom:8px">Resumo em tempo real</div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <div style="text-align:center">
+              <div class="num" id="quickConfirmed">0</div>
+              <div class="small muted">Confirmados</div>
+            </div>
+            <div style="text-align:center">
+              <div class="num" id="quickPending">0</div>
+              <div class="small muted">Aguardando</div>
+            </div>
+            <div style="text-align:center">
+              <div class="num" id="quickCancelled">0</div>
+              <div class="small muted">Cancelados</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  <!-- Rodapé -->
+<footer>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+    <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+    <!-- Contato discreto -->
+    <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+        📞 (00) 90000-0000 • ✉ contato@glamourservice.com
+    </p>
+
+    <p style="color:#777;font-size:13px;margin-top:6px;">
+        © 2025 Glamour Service. Todos os direitos reservados.
+    </p>
+</footer>
+    
+  </div>
+
+  <!-- Modal (details) -->
+  <div class="modal-back" id="modalBack" role="dialog" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="modalTitle">
+      <header>
+        <div>
+          <h3 id="modalTitle">Detalhes</h3>
+          <div class="small muted" id="modalSubtitle"></div>
+        </div>
+        <div>
+          <button class="close" id="closeModal" aria-label="Fechar">✕</button>
+        </div>
+      </header>
+      <div id="modalContent">
+       
+      </div>
+    </div>
+  </div>
+
+<script>
+
+const client = {
+  name: "Empresa Exemplo LTDA",
+  type: "PJ",
+  events: [
+    { id: "E-102", title: "Coquetel TechUp", date:"2025-12-18", status:"confirmado", details:"Cocktail corporate - 80 pessoas. Local: Hotel Plaza."},
+    { id: "E-117", title: "Aniversário Laura", date:"2026-01-09", status:"negociacao", details:"Festa 30 anos - 120 pessoas. Local: Espaço Bela Vista."}
+  ],
+  contracts: [
+    { id:"C-0023", event:"Casamento Lara & João", status:"ativo", file:"/mock/C-0023.pdf", signedAt:"2025-09-11"},
+    { id:"C-0017", event:"Festa Corporativa TechUp", status:"finalizado", file:"/mock/C-0017.pdf", signedAt:"2024-05-22"}
+  ],
+  quotes: [
+    { id:"Q-012", event:"Festa 15 Anos - Maria", value:2500, status:"aguardando", created:"2025-11-20"},
+    { id:"Q-009", event:"Coquetel Empresa Alpha", value:4100, status:"aprovado", created:"2025-10-03"}
+  ]
+};
+
+function el(q){ return document.querySelector(q) }
+function els(q){ return Array.from(document.querySelectorAll(q)) }
+
+function formatMoney(v){ return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) }
+
+function renderSummaries(){
+  el('#clientName').textContent = client.name;
+  el('#numEvents').textContent = client.events.length;
+  el('#numQuotes').textContent = client.quotes.length;
+  el('#numContracts').textContent = client.contracts.length + " (" + client.contracts.filter(c=>c.status==='finalizado').length + " finalizados)";
+
+  const confirmed = client.events.filter(e=>e.status==='confirmado').length;
+  const pending = client.events.filter(e=>e.status==='negociacao').length;
+  const cancelled = client.events.filter(e=>e.status==='cancelado').length;
+  el('#quickConfirmed').textContent = confirmed;
+  el('#quickPending').textContent = pending;
+  el('#quickCancelled').textContent = cancelled;
+}
+
+function makeStatusSpan(status){
+  const s = document.createElement('span');
+  s.className = 'status ' + (status==='confirmado' ? 'confirmado' : (status==='negociacao' ? 'negociacao' : 'cancelado'));
+  s.textContent = (status==='confirmado' ? 'Confirmado' : (status==='negociacao' ? 'Em negociação' : 'Cancelado'));
+  return s;
+}
+
+function renderEvents(){
+  const list = el('#eventsList');
+  list.innerHTML = '';
+  client.events.forEach(ev=>{
+    const row = document.createElement('div');
+    row.className = 'event-row';
+    row.innerHTML = `
+      <div style="display:flex;gap:12px;align-items:center;min-width:0">
+        <div style="width:8px;height:40px;border-radius:6px;background:${ev.status==='confirmado' ? 'var(--success)' : ev.status==='negociacao' ? '#ffc107':'#dc3545'};flex-shrink:0"></div>
+        <div class="col">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div style="min-width:0">
+              <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ev.title}</div>
+              <div class="small muted">${ev.date} • ${ev.id}</div>
+            </div>
+            <div style="margin-left:8px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <!-- status injected -->
+        <div class="small muted" id="st-${ev.id}"></div>
+        <button class="btn ghost" data-action="details" data-id="${ev.id}">Ver Detalhes</button>
+      </div>
+    `;
+    list.appendChild(row);
+    const container = el(`#st-${ev.id}`);
+    container.appendChild(makeStatusSpan(ev.status));
+  });
+}
+
+function renderContracts(tab='ativos'){
+  const list = el('#contractsList');
+  list.innerHTML = '';
+  const filtered = client.contracts.filter(c => tab==='ativos' ? c.status!=='finalizado' : c.status==='finalizado');
+  if(filtered.length===0){
+    list.innerHTML = `<div class="small muted">Nenhum contrato ${tab==='ativos'?'ativo':'finalizado'} encontrado.</div>`;
+    return;
+  }
+  filtered.forEach(c=>{
+    const row = document.createElement('div');
+    row.className = 'contract-row';
+    row.innerHTML = `
+      <div style="min-width:0">
+        <div style="font-weight:700">${c.event}</div>
+        <div class="small muted">${c.id} • Assinado em: ${c.signedAt || '—'}</div>
+      </div>
+      <div class="actions">
+        <a class="fake" href="#" data-action="download" data-file="${c.file}">⬇ Download</a>
+        <button class="btn ghost" data-action="detail-contract" data-id="${c.id}">Ver</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function renderQuotes(){
+  const list = el('#quotesList');
+  list.innerHTML = '';
+  client.quotes.forEach(q=>{
+    const row = document.createElement('div');
+    row.className = 'quote-row';
+    row.innerHTML = `
+      <div style="min-width:0">
+        <div style="font-weight:700">${q.event}</div>
+        <div class="small muted">#${q.id} • ${q.created} • ${formatMoney(q.value)}</div>
+      </div>
+      <div class="actions">
+        <div class="small muted">${q.status === 'aprovado' ? 'Aprovado' : (q.status==='aguardando' ? 'Aguardando análise' : q.status)}</div>
+        <button class="btn" data-action="view-quote" data-id="${q.id}">Ver Detalhes</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+/* Modal helpers */
+const modalBack = el('#modalBack');
+const modalTitle = el('#modalTitle');
+const modalSubtitle = el('#modalSubtitle');
+const modalContent = el('#modalContent');
+
+function openModal(title, sub, contentHTML){
+  modalTitle.textContent = title;
+  modalSubtitle.textContent = sub || '';
+  modalContent.innerHTML = contentHTML;
+  modalBack.style.display = 'flex';
+  modalBack.setAttribute('aria-hidden','false');
+}
+function closeModal(){ modalBack.style.display='none'; modalBack.setAttribute('aria-hidden','true') }
+
+/* actions */
+document.addEventListener('click', (ev)=>{
+  const target = ev.target.closest('[data-action]');
+  if(target){
+    ev.preventDefault();
+    const action = target.getAttribute('data-action');
+    const id = target.getAttribute('data-id');
+    if(action === 'details'){
+      const e = client.events.find(x=>x.id===id);
+      openModal(e.title, `${e.date} • ${e.id}`, `<p class="small muted">${e.details}</p><div style="margin-top:12px"><strong>Status:</strong> ${e.status}</div>`);
+    } else if(action === 'view-quote'){
+      const q = client.quotes.find(x=>x.id===id);
+      openModal(`Orçamento ${q.id}`, `${q.event} • ${formatMoney(q.value)}`, `<p class="small muted">Criado em: ${q.created}</p><div style="margin-top:12px"><strong>Status:</strong> ${q.status}</div><div style="margin-top:12px"><button class="btn" onclick="downloadMock('${q.id}')">⬇ Baixar PDF (demo)</button></div>`);
+    } else if(action === 'approve-quote'){
+      const q = client.quotes.find(x=>x.id===id);
+      if(q){ q.status = 'aprovado'; renderQuotes(); renderSummaries(); openModal('Orçamento aprovado', '', `<p class="small muted">Orçamento ${q.id} aprovado com sucesso.</p>`); }
+    } else if(action === 'download'){
+      // mock download behavior
+      const file = target.getAttribute('data-file') || 'documento.pdf';
+      downloadMock(file);
+    } else if(action === 'detail-contract'){
+      const c = client.contracts.find(x=>x.id===id);
+      openModal(`Contrato ${c.id}`, c.event, `<p class="small muted">Assinado em: ${c.signedAt || '—'}</p><div style="margin-top:12px"><a class="fake" href="#" onclick="downloadMock('${c.file}');return false">⬇ Baixar contrato (demo)</a></div>`);
+    }
+  }
+});
+
+function downloadMock(name){
+  // create a small fake PDF blob (text as placeholder) and trigger download
+  const blob = new Blob([`Documento demo: ${name}\nGlamour Service`], {type:'application/pdf'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `${name.replace('/','_')}.pdf`; document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(url);
+}
+
+/* Tab switching */
+els('[data-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    els('[data-tab]').forEach(b=>b.classList.remove('btn')); // reset
+    els('[data-tab]').forEach(b=>b.classList.add('btn','ghost'));
+    btn.classList.remove('ghost'); btn.classList.add('btn');
+    const tab = btn.getAttribute('data-tab');
+    renderContracts(tab);
+  });
+});
+
+/* modal close */
+el('#closeModal').addEventListener('click', closeModal);
+modalBack.addEventListener('click', (e)=>{ if(e.target === modalBack) closeModal(); });
+
+/* top actions */
+el('#btnNewQuote').addEventListener('click', ()=> { window.location.href = "{{ url_for('form_orcamento') }}"; });
+el('#viewAllEvents').addEventListener('click', ()=> openModal('Todos os eventos', '', `<ul class="small muted">${client.events.map(e=>`<li>${e.id} — ${e.title} — ${e.date} — ${e.status}</li>`).join('')}</ul>`));
+el('#viewAllQuotes').addEventListener('click', ()=> openModal('Todos os orçamentos', '', `<ul class="small muted">${client.quotes.map(q=>`<li>${q.id} — ${q.event} — ${formatMoney(q.value)} — ${q.status}</li>`).join('')}</ul>`));
+
+/* initial render */
+renderSummaries();
+renderEvents();
+renderContracts('ativos');
+renderQuotes();
+</script>
+
+
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const mainNav = document.getElementById('mainNav');
+  if(menuBtn && mainNav){
+    menuBtn.addEventListener('click', ()=> mainNav.classList.toggle('show'));
+    mainNav.addEventListener('click', e => { if(e.target.tagName === 'A') mainNav.classList.remove('show'); });
+  }
+</script>
+
+</body>
+</html>

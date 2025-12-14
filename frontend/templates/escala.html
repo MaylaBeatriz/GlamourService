@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalas</title>
+    <style>
+        body { background-color: #111; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 12px 30px; background-color: rgba(0,0,0,0.7); position: sticky; top: 0; z-index: 10; box-sizing: border-box; }
+        header img { max-height: 70px; }
+        nav { display: flex; align-items: center; gap: 16px; }
+        nav a { text-decoration: none; color: #d4af37; font-weight: bold; }
+        h1, h2 { text-align: center; color: #d4af37; }
+        .container { max-width: 900px; margin: 20px auto; background: #1c1c1c; padding: 20px; border-radius: 10px; }
+        label { display: block; margin-top: 10px; }
+        input, select, textarea, button { width: 100%; padding: 10px; margin-top: 6px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; color-scheme: dark; }
+        button { cursor: pointer; background: #d4af37; color: #000; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #444; padding: 10px; text-align: left; }
+        th { background: #333; color: #d4af37; }
+        .delete-btn { background-color: #b30000; color: white; padding: 5px 10px; text-align: center; }
+        .edit-btn { background-color: #d4af37; color: #000; padding: 5px 10px; text-align: center; border: none; border-radius: 5px; cursor: pointer; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #1c1c1c; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 10px; }
+        footer { background: #000; text-align: center; padding: 30px 20px; margin-top: 40px; }
+        footer img { max-width: 140px; }
+        footer p { color: #ccc; }
+
+        /* Notification Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745; /* Green */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1050;
+            display: none;
+            font-size: 16px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+<div id="notification" class="toast"></div>
+    <header>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+        <nav>
+            <a href="{{ url_for('administrativo') }}">Home</a>
+            <a href="{{ url_for('funcionario') }}">Funcionários</a>
+            <a href="{{ url_for('contato') }}">Contato</a>
+            <a href="{{ url_for('index') }}">Sair</a>
+        </nav>
+    </header>
+
+    <h1>Escalas de Funcionários</h1>
+
+    <div class="container">
+        <h2>Nova Escala</h2>
+        <form id="addEscalaForm">
+            <label>Evento:</label>
+            <select name="id_evento" required>
+                {% for evento in eventos %}
+                <option value="{{ evento.id }}">{{ evento.titulo_evento }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Data:</label>
+            <input type="date" name="data_turno" required>
+
+            <label>Início do Turno:</label>
+            <input type="time" name="inicio_turno" required>
+
+            <label>Fim do Turno:</label>
+            <input type="time" name="fim_turno" required>
+
+            <label>Funcionários:</label>
+            <select name="funcionarios" multiple size="5" required>
+                {% for f in funcionarios %}
+                <option value="{{ f.id }}">{{ f.nome_funcionario }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="button" onclick="addEscala()">Salvar Escala</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Escalas Registradas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Evento</th>
+                    <th>Data</th>
+                    <th>Início do Turno</th>
+                    <th>Fim do Turno</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for escala in escalas %}
+                <tr id="escala-{{ escala.id }}">
+                    <td>{{ escala.titulo_evento }}</td>
+                    <td>{{ escala.data_turno }}</td>
+                    <td>{{ escala.inicio_turno }}</td>
+                    <td>{{ escala.fim_turno }}</td>
+                    <td>
+                        <button class="edit-btn" onclick="openEditModal('{{ escala.id }}', '{{ escala.id_evento }}', '{{ escala.data_turno }}', '{{ escala.inicio_turno }}', '{{ escala.fim_turno }}')">Editar</button>
+                        <form action="{{ url_for('delete_escala', id=escala.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="delete-btn">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>Editar Escala</h2>
+            <form id="editForm">
+                <input type="hidden" id="edit_id_escala" name="id_escala">
+                <label>Evento:</label>
+                <select name="id_evento" id="edit_id_evento" required>
+                    {% for evento in eventos %}
+                    <option value="{{ evento.id }}">{{ evento.titulo_evento }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Data:</label>
+                <input type="date" id="edit_data_turno" name="data_turno" required>
+
+                <label>Início do Turno:</label>
+                <input type="time" id="edit_inicio_turno" name="inicio_turno" required>
+
+                <label>Fim do Turno:</label>
+                <input type="time" id="edit_fim_turno" name="fim_turno" required>
+
+                <button type="submit">Salvar Alterações</button>
+                <button type="button" onclick="closeEditModal()" style="background-color:#555;">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+        <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+        <p style="color:#777;font-size:13px;margin-top:6px;"> 2025 Glamour Service. Todos os direitos reservados.</p>
+    </footer>
+
+<script>
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const id = form.action.split('/').pop();
+        const dadosEscala = {
+            id_evento: form.id_evento.value,
+            data_turno: form.data_turno.value,
+            inicio_turno: form.inicio_turno.value,
+            fim_turno: form.fim_turno.value
+        };
+
+        fetch('/update_escala/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosEscala)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const escala = data.escala;
+                const row = document.getElementById('escala-' + escala[0]);
+                if (row) {
+                    row.children[0].textContent = escala[1];
+                    row.children[1].textContent = escala[2];
+                    row.children[2].textContent = escala[3];
+                    row.children[3].textContent = escala[4];
+                }
+                closeEditModal();
+                showNotification('Escala atualizada com sucesso!');
+            } else {
+                alert('Erro ao atualizar escala.');
+            }
+        });
+    });
+
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000); // Hide after 3 seconds
+    }
+
+    function openEditModal(id, id_evento, data_turno, inicio_turno, fim_turno) {
+        document.getElementById('editForm').action = '/update_escala/' + id;
+        document.getElementById('edit_id_escala').value = id;
+        document.getElementById('edit_id_evento').value = id_evento;
+        document.getElementById('edit_data_turno').value = data_turno;
+        document.getElementById('edit_inicio_turno').value = inicio_turno;
+        document.getElementById('edit_fim_turno').value = fim_turno;
+        document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    function addEscala() {
+        const idEvento = document.querySelector('#addEscalaForm [name="id_evento"]').value;
+        const dataTurno = document.querySelector('#addEscalaForm [name="data_turno"]').value;
+        const inicioTurno = document.querySelector('#addEscalaForm [name="inicio_turno"]').value;
+        const fimTurno = document.querySelector('#addEscalaForm [name="fim_turno"]').value;
+        const funcionariosSelect = document.querySelector('#addEscalaForm [name="funcionarios"]');
+        const funcionariosIds = [...funcionariosSelect.options].filter(option => option.selected).map(option => option.value);
+
+        const dadosEscala = {
+            id_evento: idEvento,
+            data_turno: dataTurno,
+            inicio_turno: inicioTurno,
+            fim_turno: fimTurno,
+            funcionarios: funcionariosIds
+        };
+
+        fetch('/add_escala', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosEscala)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const escala = data.escala;
+                const newRow = `
+                    <tr id="escala-${escala[0]}">
+                        <td>${escala[1]}</td>
+                        <td>${escala[2]}</td>
+                        <td>${escala[3]}</td>
+                        <td>${escala[4]}</td>
+                        <td>
+                            <button class="edit-btn" onclick="openEditModal('${escala[0]}', '${escala[1]}', '${escala[2]}', '${escala[3]}', '${escala[4]}')">Editar</button>
+                            <form action="/delete_escala/${escala[0]}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>`;
+                document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                document.getElementById('addEscalaForm').reset();
+                showNotification('Escala adicionada com sucesso!');
+            } else {
+                alert('Erro ao adicionar escala.');
+            }
+        });
+    }
+</script>
+</body>
+</html>

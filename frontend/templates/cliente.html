@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro de Cliente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Cabeçalho */
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        header img {
+            max-height: 70px;
+            max-width: 170px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            max-width: 60%;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            font-size: 15px;
+            text-decoration: none;
+            color: #d4af37;
+            font-weight: bold;
+            transition: .3s;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            color: #ff0000;
+        }
+
+        #menuBtn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #d4af37;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+
+        h1 {
+            text-align: center;
+            color: #d4af37;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1c1c1c;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #ccc;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #b30000;
+            color: white;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #d40000;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: #d4af37;
+        }
+
+        .actions button {
+            margin-right: 5px;
+            background-color: #555;
+        }
+
+        .actions button:hover {
+            background-color: #777;
+        }
+
+        /* Rodapé */
+        footer {
+            background: #000;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer img {
+            max-width: 140px;
+            margin-bottom: 10px;
+        }
+
+        footer p {
+            margin: 6px 0;
+            color: #ccc;
+        }
+
+        @media(max-width:900px) {
+            nav {
+                gap: 10px;
+                max-width: 55%;
+            }
+
+            nav a {
+                font-size: 14px;
+            }
+
+            header img {
+                max-height: 55px;
+            }
+
+            #menuBtn {
+                display: inline-block;
+            }
+
+            nav {
+                display: none;
+            }
+
+            nav.show {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                right: 18px;
+                top: 64px;
+                background: rgba(0, 0, 0, 0.8);
+                padding: 10px;
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+        <button id="menuBtn">☰ Menu</button>
+
+        <nav id="mainNav">
+            <a href="{{ url_for('administrativo') }}">Home</a>
+            <a href="{{ url_for('funcionario') }}">Funcionarios</a>
+            <a href="{{ url_for('orcamento') }}">Orcamentos</a>
+            <a href="{{ url_for('evento') }}">Eventos</a>
+            <a href="{{ url_for('index') }}">Sair</a>
+        </nav>
+    </header>
+    <h1>Glamour Service - Clientes</h1>
+    <div class="container">
+        <h2>Cadastrar Cliente</h2>
+        <label>Nome:</label>
+        <input type="text" id="nome" />
+
+        <label>Email:</label>
+        <input type="email" id="email" />
+
+        <label>Telefone:</label>
+        <input type="text" id="telefone" />
+
+        <button onclick="adicionarCliente()">Salvar</button>
+
+        <h2>Lista de Clientes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="listaClientes">
+                {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente[1] }}</td>
+                    <td>{{ cliente[2] }}</td>
+                    <td>{{ cliente[3] }}</td>
+                    <td class="actions">
+                        <button>Editar</button>
+                        <button>Excluir</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <footer>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+        <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+        <!-- Contato -->
+        <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+            📞 (00) 90000-0000 • ✉ contato@glamourservice.com
+        </p>
+
+        <p style="color:#777;font-size:13px;margin-top:6px;">
+            2025 Glamour Service. Todos os direitos reservados.
+        </p>
+    </footer>
+
+    <script>
+        // A lógica de renderização agora é feita pelo servidor com Jinja2.
+        // O JavaScript para manipulação do lado do cliente foi removido.
+    </script>
+</body>
+
+</html>

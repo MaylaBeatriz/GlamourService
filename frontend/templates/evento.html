@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glamour Service - Eventos</title>
+
+<style>
+    body {
+        background: #0c0c0c;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+   /* Cabeçalho */
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 30px;
+        background-color: rgba(0,0,0,0.7);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-sizing: border-box;
+    }
+    header img { max-height: 70px; max-width: 170px; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        max-width: 60%;
+        justify-content: flex-end;
+    }
+
+    nav a {
+        font-size: 15px;
+        text-decoration: none;
+        color: #d4af37;
+        font-weight: bold;
+        transition:.3s;
+        white-space: nowrap;
+    }
+    nav a:hover { color:#ff0000; }
+
+    #menuBtn {
+        display:none;
+        background:transparent;
+        border:1px solid rgba(212,175,55,0.4);
+        color:#d4af37;
+        padding:6px 12px;
+        border-radius:6px;
+        cursor:pointer;
+        font-size:16px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        background:#111;
+        border-radius: 10px;
+    }
+
+    h2 { margin-bottom:10px; }
+
+    .event-form input, .event-form button {
+        padding:10px;
+        margin:5px;
+        border-radius:5px;
+        border:none;
+        font-size:14px;
+    }
+
+    .event-form input { width: 30%; background:#222; color:#fff; color-scheme: dark; }
+    .event-form button {
+        background:#d4af37;
+        color:#000;
+        cursor:pointer;
+        font-weight:bold;
+    }
+
+    table {
+        width:100%;
+        border-collapse: collapse;
+        margin-top:20px;
+    }
+
+    th, td {
+        padding:10px;
+        border-bottom:1px solid #444;
+        text-align:left;
+    }
+
+    th { color:#d4af37; }
+
+    button.edit, button.delete {
+        padding:6px 10px;
+        border:none;
+        border-radius:5px;
+        cursor:pointer;
+        font-weight:bold;
+    }
+
+    button.edit { background:#d4af37; color:#000; }
+    button.edit { background:#d4af37; color:#000; }
+    button.delete { background:#b40000; color:#fff; margin-left:5px; }
+
+    .modal-content input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #222;
+        color: #fff;
+        border: 1px solid #444;
+        border-radius: 5px;
+    }
+
+    /* Modal */
+    .modal-bg {
+        display:none;
+        position:fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background:rgba(0,0,0,.7);
+        justify-content:center;
+        align-items:center;
+    }
+
+    .modal {
+        background:#111;
+        padding:20px;
+        width:350px;
+        border-radius:10px;
+        box-shadow:0 0 15px #000;
+    }
+
+    .modal input {
+        width:100%;
+        margin-bottom:10px;
+        padding:8px;
+        background:#222;
+        color:#fff;
+        border:none;
+        border-radius:5px;
+    }
+
+    .modal button {
+        padding:10px;
+        width:48%;
+        border:none;
+        margin-top:10px;
+        border-radius:5px;
+        cursor:pointer;
+        font-weight:bold;
+    }
+
+    .confirm { background:#d4af37; color:#000; }
+    .cancel { background:#333; color:#fff; }
+
+    /* Notification Toast */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #28a745; /* Green */
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        z-index: 1050;
+        display: none;
+        font-size: 16px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+/* Rodapé */
+    footer{
+        background:#000;
+        text-align:center;
+        padding:30px 20px;
+        margin-top:40px;
+    }
+    footer img{
+        max-width:140px;
+        margin-bottom:10px;
+    }
+    footer p{margin:6px 0;color:#ccc;}
+
+    @media(max-width:900px){
+        nav{gap:10px;max-width:55%;}
+        nav a{font-size:14px;}
+        header img{max-height:55px;}
+        #menuBtn{display:inline-block;}
+        nav{display:none;}
+        nav.show{display:flex;flex-direction:column;position:absolute;right:18px;top:64px;background:rgba(0,0,0,0.8);padding:10px;border-radius:8px;}
+    }
+
+</style>
+</head>
+
+<body>
+
+<div id="notification" class="toast"></div>
+
+<header>
+<img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+<button id="menuBtn">☰ Menu</button>
+
+<nav id="mainNav">
+    <a href="{{ url_for('administrativo') }}">Home</a>
+    <a class="btn" href="{{ url_for('funcionario') }}">Funcionários</a>
+    <a class="btn" href="{{ url_for('orcamento') }}">Orçamentos</a>
+    <a class="btn" href="{{ url_for('evento') }}">Eventos</a>
+    <a href="{{ url_for('index') }}">Sair</a>
+</nav>
+</header>
+
+<div class="container">
+
+    <h2>Cadastro de Eventos</h2>
+
+    <div class="event-form">
+        <input type="text" id="titulo_evento" placeholder="Título do Evento" required>
+        <input type="text" id="nome_cliente" placeholder="Nome do Cliente" required>
+        <input type="email" id="email_cliente" placeholder="Email do Cliente" required>
+        <input type="text" id="telefone_cliente" placeholder="Telefone do Cliente" required>
+        <input type="date" id="data_evento" required>
+        <input type="text" id="tipo_evento" placeholder="Tipo do Evento" required>
+        <input type="number" id="num_convidados" placeholder="Nº de Convidados" required>
+        <input type="text" id="endereco_evento" placeholder="Endereço do Evento" required>
+        <button onclick="adicionarEvento()">Adicionar</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Cliente</th>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Convidados</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="listaEventos">
+            {% for evento in eventos %}
+            <tr>
+                <td>{{ evento.titulo_evento }}</td>
+                <td>{{ evento.nome_cliente }}</td>
+                <td>{{ evento.data_evento }}</td>
+                <td>{{ evento.tipo_evento }}</td>
+                <td>{{ evento.num_convidados }}</td>
+                <td>{{ evento.email_cliente }}</td>
+                <td>{{ evento.telefone_cliente }}</td>
+                <td>{{ evento.endereco_evento }}</td>
+                <td>
+                    <button class="edit" onclick="openEditModal('{{ evento.id }}', '{{ evento.titulo_evento }}', '{{ evento.nome_cliente }}', '{{ evento.email_cliente }}', '{{ evento.telefone_cliente }}', '{{ evento.data_evento }}', '{{ evento.tipo_evento }}', '{{ evento.num_convidados }}', '{{ evento.endereco_evento }}')">Editar</button>
+                    <form action="{{ url_for('delete_evento', id=evento.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="delete">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal de edição -->
+<div class="modal-bg" id="modalEditar">
+    <div class="modal">
+        <form id="editForm">
+        <div class="modal-content">
+            <h3>Editar Evento</h3>
+            <input type="hidden" id="edit_id_evento" name="id_evento">
+            <input type="text" id="edit_titulo_evento" name="edit_titulo_evento" placeholder="Título do Evento" required>
+            <input type="text" id="edit_nome_cliente" name="edit_nome_cliente" placeholder="Nome do Cliente" required>
+            <input type="email" id="edit_email_cliente" name="edit_email_cliente" placeholder="Email do Cliente" required>
+            <input type="text" id="edit_telefone_cliente" name="edit_telefone_cliente" placeholder="Telefone do Cliente" required>
+            <input type="date" id="edit_data_evento" name="edit_data_evento" required>
+            <input type="text" id="edit_tipo_evento" name="edit_tipo_evento" placeholder="Tipo do Evento" required>
+            <input type="number" id="edit_num_convidados" name="edit_num_convidados" placeholder="Nº de Convidados" required>
+            <input type="text" id="edit_endereco_evento" name="edit_endereco_evento" placeholder="Endereço do Evento" required>
+            <div style="display:flex;justify-content:space-between;">
+                <button type="submit" class="confirm">Salvar</button>
+                <button type="button" class="cancel" onclick="closeEditModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+    <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+    <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+        (00) 90000-0000 • contato@glamourservice.com
+    </p>
+</footer>
+
+<script>
+    function openEditModal(id, titulo, nome, email, telefone, data, tipo, convidados, endereco) {
+        document.getElementById('edit_id_evento').value = id;
+        document.getElementById('edit_titulo_evento').value = titulo;
+        document.getElementById('edit_nome_cliente').value = nome;
+        document.getElementById('edit_email_cliente').value = email;
+        document.getElementById('edit_telefone_cliente').value = telefone;
+        document.getElementById('edit_data_evento').value = data;
+        document.getElementById('edit_tipo_evento').value = tipo;
+        document.getElementById('edit_num_convidados').value = convidados;
+        document.getElementById('edit_endereco_evento').value = endereco;
+        document.getElementById('modalEditar').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('modalEditar').style.display = 'none';
+    }
+
+    function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000); // Hide after 3 seconds
+    }
+
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const id = form.action.split('/').pop();
+        const dadosEvento = {
+            titulo_evento: form.edit_titulo_evento.value,
+            nome_cliente: form.edit_nome_cliente.value,
+            email_cliente: form.edit_email_cliente.value,
+            telefone_cliente: form.edit_telefone_cliente.value,
+            data_evento: form.edit_data_evento.value,
+            tipo_evento: form.edit_tipo_evento.value,
+            num_convidados: form.edit_num_convidados.value,
+            endereco_evento: form.edit_endereco_evento.value
+        };
+
+        fetch('/update_evento/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosEvento)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const evento = data.evento;
+                const row = document.getElementById('evento-' + evento[0]);
+                if (row) {
+                    row.children[0].textContent = evento[1];
+                    row.children[1].textContent = evento[6];
+                    row.children[2].textContent = evento[2];
+                    row.children[3].textContent = evento[3];
+                    row.children[4].textContent = evento[4];
+                    row.children[5].textContent = evento[7];
+                    row.children[6].textContent = evento[8];
+                    row.children[7].textContent = evento[5];
+                }
+                closeEditModal();
+                showNotification('Evento atualizado com sucesso!');
+            } else {
+                alert('Erro ao editar evento.');
+            }
+        });
+    });
+
+    function adicionarEvento() {
+        const dadosEvento = {
+            titulo_evento: document.getElementById('titulo_evento').value,
+            nome_cliente: document.getElementById('nome_cliente').value,
+            email_cliente: document.getElementById('email_cliente').value,
+            telefone_cliente: document.getElementById('telefone_cliente').value,
+            data_evento: document.getElementById('data_evento').value,
+            tipo_evento: document.getElementById('tipo_evento').value,
+            num_convidados: document.getElementById('num_convidados').value,
+            endereco_evento: document.getElementById('endereco_evento').value
+        };
+
+        fetch('/add_evento', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dadosEvento)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const evento = data.evento;
+                const newRow = `
+                    <tr id="evento-${evento[0]}">
+                        <td>${evento[1]}</td>
+                        <td>${evento[6]}</td>
+                        <td>${evento[2]}</td>
+                        <td>${evento[3]}</td>
+                        <td>${evento[4]}</td>
+                        <td>${evento[7]}</td>
+                        <td>${evento[8]}</td>
+                        <td>${evento[5]}</td>
+                        <td>
+                            <button class="edit" onclick="openEditModal('${evento[0]}', '${evento[1]}', '${evento[6]}', '${evento[7]}', '${evento[8]}', '${evento[2]}', '${evento[3]}', '${evento[4]}', '${evento[5]}')">Editar</button>
+                            <form action="/delete_evento/${evento[0]}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>`;
+                document.getElementById('listaEventos').insertAdjacentHTML('beforeend', newRow);
+                // Limpar campos do formulário
+                document.getElementById('titulo_evento').value = '';
+                document.getElementById('nome_cliente').value = '';
+                document.getElementById('email_cliente').value = '';
+                document.getElementById('telefone_cliente').value = '';
+                document.getElementById('data_evento').value = '';
+                document.getElementById('tipo_evento').value = '';
+                document.getElementById('num_convidados').value = '';
+                document.getElementById('endereco_evento').value = '';
+                showNotification('Evento adicionado com sucesso!');
+            } else {
+                alert('Erro ao adicionar evento.');
+            }
+        });
+    }
+</script>
+</body>
+</html>

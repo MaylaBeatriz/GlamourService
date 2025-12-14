@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrativo- Glamour</title>
+
+<style>
+    body{
+        background:#0c0c0c;
+        color:#fff;
+        margin:0;
+        font-family:Arial, sans-serif;
+        text-align:center;
+    }
+
+    /* Cabeçalho */
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 30px;
+        background-color: rgba(0,0,0,0.7);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-sizing: border-box;
+    }
+    header img { max-height: 70px; max-width: 170px; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        max-width: 60%;
+        justify-content: flex-end;
+    }
+
+    nav a {
+        font-size: 15px;
+        text-decoration: none;
+        color: #d4af37;
+        font-weight: bold;
+        transition:.3s;
+        white-space: nowrap;
+    }
+    nav a:hover { color:#ff0000; }
+
+    #menuBtn {
+        display:none;
+        background:transparent;
+        border:1px solid rgba(212,175,55,0.4);
+        color:#d4af37;
+        padding:6px 12px;
+        border-radius:6px;
+        cursor:pointer;
+        font-size:16px;
+    }
+
+    /* Menu Responsivo */
+    @media(max-width:800px){
+        nav { display:none; flex-direction:column; background:#000; padding:15px;
+              position:absolute; top:80px; right:20px; border-radius:8px; }
+        nav.show{ display:flex; }
+        #menuBtn { display:block; }
+    }
+
+    /* Container */
+    .container{
+        max-width:700px;
+        margin:50px auto;
+        padding:20px;
+        background:#111;
+        border-radius:10px;
+        box-shadow:0 0 15px #000;
+    }
+
+    h2{
+        color:#d4af37;
+        margin-bottom:25px;
+    }
+
+    .buttons{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:20px;
+        margin-top:20px;
+    }
+
+    .btn{
+        width:220px;
+        padding:15px;
+        background:#d4af37;
+        color:#000;
+        text-decoration:none;
+        font-weight:bold;
+        border-radius:8px;
+        font-size:18px;
+        transition:.3s;
+        display:block;
+    }
+
+    .btn:hover{
+        background:#fff;
+        color:#000;
+        transform:scale(1.05);
+    }
+
+    /* Rodapé */
+    footer{
+        background:#000;
+        text-align:center;
+        padding:30px 20px;
+        margin-top:40px;
+    }
+    footer img{
+        max-width:140px;
+        margin-bottom:10px;
+    }
+    footer p{margin:6px 0;color:#ccc;}
+
+    @media(max-width:900px){
+        nav{gap:10px;max-width:55%;}
+        nav a{font-size:14px;}
+        header img{max-height:55px;}
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+    <button id="menuBtn">☰ Menu</button>
+
+    <nav id="mainNav">
+        <a href="{{ url_for('administrativo') }}">Home</a>
+        <a href="{{ url_for('index') }}">Sair</a>
+       
+</header>
+
+<div class="container">
+    <h2>Gestão do Sistema Glamour Service</h2>
+    <p>Selecione uma área para administrar:</p>
+
+    <div class="buttons">
+        <a class="btn" href="{{ url_for('cliente') }}">Clientes</a>
+        <a class="btn" href="{{ url_for('funcionario') }}">Funcionários</a>
+        <a class="btn" href="{{ url_for('orcamento') }}">Orçamentos</a>
+        <a class="btn" href="{{ url_for('evento') }}">Eventos</a>
+    </div>
+</div>
+
+<!-- Rodapé sem links -->
+<footer>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+    <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+    <!-- Contato discreto -->
+    <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+        📞 (00) 90000-0000 • ✉ contato@glamourservice.com
+    </p>
+
+    <p style="color:#777;font-size:13px;margin-top:6px;">
+        © 2025 Glamour Service. Todos os direitos reservados.
+    </p>
+</footer>
+
+<script>
+    // Menu mobile
+    const menuBtn = document.getElementById("menuBtn");
+    const nav = document.getElementById("mainNav");
+
+    menuBtn.addEventListener("click",()=>{
+        nav.classList.toggle("show");
+    });
+</script>
+
+</body>
+</html>

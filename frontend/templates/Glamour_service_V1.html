@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glamour Service - Orçamentos</title>
+
+<style>
+    body{
+        background:#0c0c0c;
+        color:#fff;
+        margin:0;
+        font-family:Arial, sans-serif;
+        text-align:center;
+    }
+
+    /* Cabeçalho */
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 30px;
+        background-color: rgba(0,0,0,0.7);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-sizing: border-box;
+    }
+    header img { max-height: 70px; max-width: 170px; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        max-width: 60%;
+        justify-content: flex-end;
+    }
+
+    nav a {
+        font-size: 15px;
+        text-decoration: none;
+        color: #d4af37;
+        font-weight: bold;
+        transition:.3s;
+        white-space: nowrap;
+    }
+    nav a:hover { color:#ff0000; }
+
+    #menuBtn {
+        display:none;
+        background:transparent;
+        border:1px solid rgba(212,175,55,0.4);
+        color:#d4af37;
+        padding:6px 12px;
+        border-radius:6px;
+        cursor:pointer;
+        font-size:16px;
+    }
+
+    .container{
+        max-width:900px;
+        margin:40px auto;
+        background:#111;
+        padding:25px;
+        border-radius:10px;
+        box-shadow:0 0 15px #000;
+    }
+
+    h2{ color:#d4af37; margin-bottom:10px; }
+
+    /* FORM com títulos e campos corrigidos */
+    .form{
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        gap:12px;
+        margin:0 auto 20px;
+        padding:20px;
+        border:1px solid #333;
+        border-radius:10px;
+        max-width:420px;
+        background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+        box-sizing:border-box;
+    }
+
+    .form label{
+        text-align:left;
+        font-size:14px;
+        color:#d4af37;
+        font-weight:bold;
+        margin-top:8px;
+    }
+
+    .form input, .form select{
+        width:100%;
+        padding:10px;
+        border:none;
+        background:#222 !important;
+        color:#fff !important;
+        border-radius:6px;
+        box-sizing:border-box;
+    }
+
+    /* Mantém escuro mesmo com preenchimento automático */
+    .form input:-webkit-autofill,
+    .form input:-webkit-autofill:hover,
+    .form input:-webkit-autofill:focus,
+    .form input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0px 1000px #222 inset !important;
+        -webkit-text-fill-color: #fff !important;
+        transition: background-color 9999s ease-in-out 0s;
+    }
+
+    .form button{
+        background:#d4af37;
+        color:#000;
+        padding:10px 16px;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;
+        font-weight:bold;
+        transition:.3s;
+        width:100%;
+        max-width:200px;
+        align-self:center;
+        margin-top:10px;
+    }
+    .form button:hover{
+        transform:scale(1.02);
+        background:#fff;
+    }
+
+    #msg{
+        margin-top:12px;
+        color:#d4af37;
+        font-weight:bold;
+    }
+
+    footer{
+        background:#000;
+        text-align:center;
+        padding:30px 20px;
+        margin-top:40px;
+    }
+    footer img{
+        max-width:140px;
+        margin-bottom:10px;
+    }
+    footer p{margin:6px 0;color:#ccc;}
+
+    @media(max-width:900px){
+        nav{gap:10px;max-width:55%;}
+        nav a{font-size:14px;}
+        header img{max-height:55px;}
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+    <button id="menuBtn">☰ Menu</button>
+
+    <nav id="mainNav">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('contato') }}">Contato</a>
+        <a href="{{ url_for('form_orcamento') }}">Faça um Orçamento</a>
+        <a href="{{ url_for('login_cliente') }}">Área do Cliente</a>
+    </nav>
+</header>
+
+
+<div class="container">
+
+    <h2>Solicite um orçamento conosco</h2>
+
+    <div class="form">
+
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" placeholder="Nome Completo" required>
+
+        <label for="email">E-mail</label>
+        <input id="email" type="email" placeholder="E-mail" required>
+
+        <label for="telefone">Telefone</label>
+        <input id="telefone" type="text" placeholder="Telefone" required>
+
+        <label for="data">Data do Evento</label>
+        <input id="data" type="date" required>
+
+        <label for="tipo">Tipo do Evento</label>
+        <input id="tipo" type="text" placeholder="Tipo do Evento" required>
+
+        <label for="convidados">Quantidade de Convidados</label>
+        <input id="convidados" type="number" placeholder="Quantidade de Convidados" required>
+
+        <label for="endereco">Endereço do Evento</label>
+        <input id="endereco" type="text" placeholder="Endereço do Evento" required>
+
+        <button onclick="enviar()">Enviar</button>
+    </div>
+
+    <p id="msg" aria-live="polite"></p>
+    
+
+</div>
+
+<footer>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+    <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+    <p style="color:#b89d44; font-size:14px;">
+        📞 (00) 90000-0000 • ✉ contato@glamourservice.com
+    </p>
+
+    <p style="color:#777;font-size:13px;">
+        © 2025 Glamour Service. Todos os direitos reservados.
+    </p>
+</footer>
+
+<script>
+function enviar(){
+    const campos = ["nome","email","telefone","data","tipo","convidados","endereco"];
+    for(let c of campos){
+        if(!document.getElementById(c).value.trim()){
+            document.getElementById("msg").textContent = "Preencha todos os campos!";
+            document.getElementById("msg").style.color = "#ff6b6b";
+            return;
+        }
+    }
+    document.getElementById("msg").textContent = "Orçamento enviado com sucesso!";
+    document.getElementById("msg").style.color = "#d4af37";
+
+    setTimeout(()=> document.getElementById("msg").textContent="",3000);
+}
+</script>
+
+</body>
+</html>

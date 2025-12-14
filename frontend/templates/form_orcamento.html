@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Formulário - Orçamento</title>
+
+<style>
+  body {
+        background:#0c0c0c;
+        color:#fff;
+        margin:0;
+        font-family:Arial, sans-serif;
+        text-align:center;
+        }
+
+        /* Cabeçalho */
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        header img {
+            max-height: 70px;
+            max-width: 170px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            max-width: 60%;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            font-size: 15px;
+            text-decoration: none;
+            color: #d4af37;
+            font-weight: bold;
+            transition: .3s;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            color: #ff0000;
+        }
+
+  .box{
+    max-width:500px;
+    margin:0 auto;
+    background:var(--card);
+    padding:28px;
+    border-radius:10px;
+    box-shadow:0px 4px 25px rgba(0,0,0,.55);
+    border:5px solid rgba(212,175,55,0.2);
+  }
+
+  h2{
+    color:var(--accent);
+    margin-top:0;
+    text-align:center;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:16px;
+  }
+
+  .field label{
+    margin-bottom:5px;
+    font-size:14px;
+    color:#d4d4d4;
+    padding-left:2px;
+    text-align:left;
+  }
+
+  input, select, textarea{
+    color-scheme: dark;
+    background:var(--input);
+    border:#d4d4d4 solid 1px;
+    padding:12px;
+    color:#fff;
+    border-radius:6px;
+    font-size:15px;
+  }
+
+  button{
+    width:100%;
+    padding:12px;
+    margin-top:12px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
+    background:#d4af37;
+  }
+
+  button:hover{
+    background:#ffdd57;
+  }
+  /* button.primary{
+    background:var(--accent);
+    color:#000;
+  }
+
+  button.primary:hover{
+    background:#d4af37;
+  }
+  button.ghost{
+    background:#d4af37;
+    color:#fff;
+  }
+
+  /* Notification Toast */
+  .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #28a745; /* Green */
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      z-index: 1050;
+      display: none;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  }
+
+ footer {
+            background: #000;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer img {
+            max-width: 140px;
+            margin-bottom: 10px;
+        }
+
+        footer p {
+            margin: 6px 0;
+            color: #ccc;
+        }
+
+</style>
+</head>
+
+<body>
+
+<div id="notification" class="toast"></div>
+
+    <header>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+
+
+    <nav id="mainNav">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('contato') }}">Contato</a>
+          <a href="{{ url_for('login_cliente') }}">Área do Cliente</a>
+    </nav>
+</header>
+
+
+<div class="box">
+
+  <h2>Cadastro de Orçamento</h2>
+
+  <form id="orcamentoForm">
+
+    <div class="field">
+      <label>Nome do solicitante</label>
+      <input type="text" name="nome_cliente" required />
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" name="email_cliente" required />
+    </div>
+
+    <div class="field">
+      <label>Telefone</label>
+      <input type="tel" name="telefone_cliente" required />
+    </div>
+
+    <div class="field">
+      <label>Data do Evento</label>
+      <input type="date" name="data_evento" required />
+    </div>
+
+    <div class="field">
+      <label>Hora do Evento</label>
+      <input type="time" name="hora_evento" required />
+    </div>
+
+    <div class="field">
+      <label>Tipo do Evento</label>
+      <input type="text" name="tipo_evento" />
+    </div>
+
+    <div class="field">
+      <label>Quantidade de Convidados</label>
+      <input type="number" name="qtde_convidados" min="0" />
+    </div>
+
+    <div class="field">
+      <label>Endereço do Evento</label>
+      <input type="text" name="endereco_evento" />
+    </div>
+
+    <button type="button" onclick="addOrcamento()" class="primary">Enviar Solicitação</button>
+
+  </form>
+</div>
+
+
+
+    <footer>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+        <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+        <!-- Contato discreto -->
+        <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+            (00) 90000-0000 • contato@glamourservice.com
+        </p>
+
+        <p style="color:#777;font-size:13px;margin-top:6px;">
+            2025 Glamour Service. Todos os direitos reservados.
+        </p>
+    </footer>
+
+<script>
+function showNotification(message) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.style.display = 'block';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000); // Hide after 3 seconds
+    }
+
+function addOrcamento() {
+    const dadosOrcamento = {
+        nome_cliente: document.querySelector('[name="nome_cliente"]').value,
+        email_cliente: document.querySelector('[name="email_cliente"]').value,
+        telefone_cliente: document.querySelector('[name="telefone_cliente"]').value,
+        data_evento: document.querySelector('[name="data_evento"]').value,
+        hora_evento: document.querySelector('[name="hora_evento"]').value,
+        tipo_evento: document.querySelector('[name="tipo_evento"]').value,
+        qtde_convidados: document.querySelector('[name="qtde_convidados"]').value,
+        endereco_evento: document.querySelector('[name="endereco_evento"]').value
+    };
+
+    fetch('/add_orcamento', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosOrcamento)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('orcamentoForm').reset();
+            showNotification('Solicitação enviada com sucesso!');
+        } else {
+            alert('Erro ao enviar solicitação.');
+        }
+    });
+}
+</script>
+
+</body>
+</html>

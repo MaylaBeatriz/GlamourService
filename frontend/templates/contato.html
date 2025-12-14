@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glamour Service - Contato</title>
+
+<style>
+    body{
+        background:#0c0c0c;
+        color:#fff;
+        margin:0;
+        font-family:Arial, sans-serif;
+        text-align:center;
+    }
+
+    /* Cabeçalho */
+    header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 30px;
+        background-color: rgba(0,0,0,0.7);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-sizing: border-box;
+    }
+    header img { max-height: 70px; max-width: 170px; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        max-width: 60%;
+        justify-content: flex-end;
+    }
+
+    nav a {
+        font-size: 15px;
+        text-decoration: none;
+        color: #d4af37;
+        font-weight: bold;
+        transition:.3s;
+        white-space: nowrap;
+    }
+    nav a:hover { color:#ff0000; }
+
+    #menuBtn {
+        display:none;
+        background:transparent;
+        border:1px solid rgba(212,175,55,0.4);
+        color:#d4af37;
+        padding:6px 12px;
+        border-radius:6px;
+        cursor:pointer;
+        font-size:16px;
+    }
+
+    .container{
+        max-width:700px;
+        margin:60px auto;
+        padding:30px;
+        background:#111;
+        border-radius:10px;
+        box-shadow:0 0 15px #000;
+    }
+
+    h2{
+        color:#d4af37;
+        margin-bottom:12px;
+    }
+
+    p{ color:#ccc; font-size:16px; }
+
+    .contact-box{
+        margin-top:25px;
+        font-size:18px;
+        line-height:30px;
+    }
+
+    .contact-box a{
+        color:#d4af37;
+        text-decoration:none;
+        font-weight:bold;
+    }
+
+    .icons{
+        margin-top:30px;
+        display:flex;
+        justify-content:center;
+        gap:12px;
+    }
+
+    .icons a{
+        background:#d4af37;
+        color:#000;
+        width:40px;
+        height:40px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:50%;
+        font-size:18px;
+        font-weight:bold;
+        transition:.18s;
+        text-decoration:none;
+        overflow:hidden;
+        padding:0;
+    }
+
+    .icons a img{
+        width:60%;
+        height:60%;
+        object-fit:contain;
+        display:block;
+    }
+
+    .icons a:hover{
+        background:#fff;
+        transform:scale(1.08);
+    }
+
+       /* Rodapé */
+    footer{
+        background:#000;
+        text-align:center;
+        padding:30px 20px;
+        margin-top:40px;
+    }
+    footer img{
+        max-width:140px;
+        margin-bottom:10px;
+    }
+    footer p{margin:6px 0;color:#ccc;}
+
+    /* Footer responsivo fixado ao final da viewport; evita sobreposição ajustando o padding-bottom do body via script abaixo */
+    #siteFooter{
+        position:fixed;
+        left:0;
+        bottom:0;
+        width:100%;
+        background:#000;
+        text-align:center;
+        padding:18px 20px;
+        box-sizing:border-box;
+        z-index:30;
+    }
+    #siteFooter img{ max-width:140px; margin-bottom:8px; display:block; margin-left:auto; margin-right:auto; }
+    #siteFooter p{ margin:6px 0; color:#ccc; font-size:14px; }
+    @media(min-width:900px){
+        #siteFooter{ padding:22px 20px; }
+    }
+
+    @media(max-width:900px){
+        nav{gap:10px;max-width:55%;}
+        nav a{font-size:14px;}
+        header img{max-height:55px;}
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+    <button id="menuBtn">☰ Menu</button>
+
+    <nav id="mainNav">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('contato') }}">Contato</a>
+        <a href="{{ url_for('form_orcamento') }}">Faça um Orçamento</a>
+        <a href="{{ url_for('login_cliente') }}">Área do Cliente</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <h2>Fale Conosco</h2>
+    <p>Entre em contato para eventos, orçamentos ou parcerias.</p>
+
+    <div class="contact-box">
+        📞 <b>Telefones:</b> (11) 99999-9999 / (11) 98888-8888 <br>
+        ✉ <b>Email:</b> <a href="mailto:contato@glamourservice.com">contato@glamourservice.com</a>
+    </div>
+
+    <!-- ÍCONES DE REDES SOCIAIS -->
+    <div class="icons">
+        <a href="https://wa.me/5511999999999" target="_blank" title="WhatsApp"><img src="{{ url_for('static', filename='Imagens/whatsapp.png') }}" alt="WhatsApp"></a>
+        <a href="https://instagram.com" target="_blank" title="Instagram"><img src="{{ url_for('static', filename='Imagens/instagram.png') }}" alt="Instagram"></a>
+        <a href="https://facebook.com" target="_blank" title="Facebook"><img src="{{ url_for('static', filename='Imagens/facebook.png') }}" alt="Facebook"></a>
+    </div>
+</div>
+
+
+<footer id="siteFooter">
+    <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+    <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+    <!-- Contato discreto -->
+    <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+        📞 (00) 90000-0000 • ✉ contato@glamourservice.com
+    </p>
+
+    <p style="color:#777;font-size:13px;margin-top:6px;">
+        © 2025 Glamour Service. Todos os direitos reservados.
+    </p>
+
+    <script>
+        (function adjustBodyPadding(){
+            const f = document.getElementById('siteFooter');
+            if(!f) return;
+            function update(){
+                const h = f.offsetHeight;
+                document.body.style.paddingBottom = h + 'px';
+            }
+            // run now and on resize (ensures footer doesn't overlap content)
+            update();
+            window.addEventListener('resize', update);
+            // also observe footer size changes (in case of responsive text wrapping)
+            if(window.ResizeObserver){
+                new ResizeObserver(update).observe(f);
+            }
+        })();
+    </script>
+</footer>
+
+</body>
+</html>

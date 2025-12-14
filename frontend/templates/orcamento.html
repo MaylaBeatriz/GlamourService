@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Orçamentos</title>
+<style>
+   body {
+        background:#0c0c0c;
+        color:#fff;
+        margin:0;
+        font-family:Arial, sans-serif;
+        text-align:center;
+        }
+
+        /* Cabeçalho */
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        header img {
+            max-height: 70px;
+            max-width: 170px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            max-width: 60%;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            font-size: 15px;
+            text-decoration: none;
+            color: #d4af37;
+            font-weight: bold;
+            transition: .3s;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            color: #ff0000;
+        }
+
+
+        .add-btn{
+  background:#d4af37;
+  color:#000;
+  padding:10px 18px;
+  border-radius:6px;
+  font-weight:bold;
+  text-decoration:none;
+  transition:.25s;
+  font-size:15px;
+  letter-spacing:0.5px;
+}
+
+.add-btn:hover{
+  background:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(212,175,55,.4);
+}
+
+
+  .container{
+    max-width:1100px;
+    margin:0 auto;
+    background:#111;
+    padding:24px;
+    border-radius:8px}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:16px}
+
+  th,td{
+    padding:12px;
+    border-bottom:1px solid #fff6f6;
+    text-align:left}
+
+  th{
+    color:#d4af37}
+
+  .actions button{
+    margin-right:8px;
+    padding:6px 10px;
+    border-radius:6px;
+    border:none;
+    cursor:pointer}
+
+  .edit{
+    background:#d4af37;
+    color:#000}
+
+  .del{
+    background:#b40000;
+    color:#fff}
+
+  .empty{
+    padding:20px;
+    text-align:center;
+    color:#ccc}
+
+
+     /* Rodapé */
+        footer {
+            background: #000;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer img {
+            max-width: 140px;
+            margin-bottom: 10px;
+        }
+
+        footer p {
+            margin: 6px 0;
+            color: #ccc;
+        }
+
+</style>
+</head>
+<body>
+    
+    <header>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+
+        <nav id="mainNav">
+        <a class="btn" href="{{ url_for('administrativo') }}">Home</a>
+        <a class="btn" href="{{ url_for('cliente') }}">Clientes</a>
+        <a class="btn" href="{{ url_for('funcionario') }}">Funcionários</a>
+        <a class="btn" href="{{ url_for('evento') }}">Eventos</a>
+        </nav>
+    </header>
+<div class="container">
+ <div class="header-bar">
+  <h2>Orçamentos Registrados</h2>
+  <a href="{{ url_for('form_orcamento') }}" class="add-btn">+ Adicionar Orçamento</a>
+</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome do solicitante</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Data do Evento</th>
+        <th>Qtde de Convidados</th>
+        <th>Endereço do Evento</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for orcamento in orcamentos %}
+      <tr>
+        <td>{{ orcamento[2] }}</td>
+        <td>{{ orcamento[3] }}</td>
+        <td>{{ orcamento[4] }}</td>
+        <td>{{ orcamento[5] }}</td>
+        <td>{{ orcamento[7] }}</td>
+        <td>{{ orcamento[8] }}</td>
+        <td>{{ orcamento[9] }}</td>
+        <td class="actions">
+          <button class="edit" onclick="alert('Função de editar a ser implementada.')">Editar</button>
+          <form action="{{ url_for('delete_orcamento', id=orcamento[0]) }}" method="POST" style="display:inline;">
+            <button type="submit" class="del">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td class="empty" colspan="9">Nenhum orçamento cadastrado</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<footer>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+        <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+        <!-- Contato discreto -->
+        <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+            📞 (00) 90000-0000 • ✉ contato@glamourservice.com
+        </p>
+
+        <p style="color:#777;font-size:13px;margin-top:6px;">
+            © 2025 Glamour Service. Todos os direitos reservados.
+        </p>
+    </footer>
+</body>
+</html>

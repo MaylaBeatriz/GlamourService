@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glamour Service</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            /* degradê discreto: preto → vermelho suave */
+            background: linear-gradient(180deg,
+                #202020 40%,
+                rgba(235, 213, 23, 0.4) 100%,
+                rgba(245, 133, 6, 0.2) 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Cabeçalho */
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        header img {
+            max-height: 70px;
+            max-width: 170px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            max-width: 60%;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            font-size: 15px;
+            text-decoration: none;
+            color: #d4af37;
+            font-weight: bold;
+            transition: .3s;
+            white-space: nowrap;
+        }
+
+        nav a:hover {
+            color: #ff0000;
+        }
+
+        #menuBtn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #d4af37;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            height: 50vh;
+            overflow: hidden;
+        }
+
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            animation: fadeIn 3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: .4;
+            }
+        }
+
+        .hero-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #d4af37;
+            font-size: 60px;
+            font-weight: bold;
+            text-shadow: 0 0 15px #000;
+            letter-spacing: 2px;
+            animation: float 4s infinite ease-in-out;
+            white-space: nowrap;
+            /* Mantém Glamour Service na mesma linha */
+        }
+
+        @keyframes float {
+            50% {
+                transform: translate(-50%, -50%) translateY(-10px);
+            }
+        }
+
+        .hero-text p {
+            position: absolute;
+            top: 68%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 0 10px #000;
+        }
+
+        section {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* Cards dinâmicos */
+        .cards-wrapper {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .card {
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+            color: #ccc;
+            text-align: left;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: #d4af37;
+            font-size: 20px;
+        }
+
+        .card p {
+            margin: 0;
+            line-height: 1.5;
+            color: #e6e6e6;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Rodapé */
+        footer {
+            background: #000;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer img {
+            max-width: 140px;
+            margin-bottom: 10px;
+        }
+
+        footer p {
+            margin: 6px 0;
+            color: #ccc;
+        }
+
+        @media(max-width:900px) {
+            nav {
+                gap: 10px;
+                max-width: 55%;
+            }
+
+            nav a {
+                font-size: 14px;
+            }
+
+            header img {
+                max-height: 55px;
+            }
+
+            #menuBtn {
+                display: inline-block;
+            }
+
+            nav {
+                display: none;
+            }
+
+            nav.show {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                right: 18px;
+                top: 64px;
+                background: rgba(0, 0, 0, 0.8);
+                padding: 10px;
+                border-radius: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Glamour Service Logo">
+        <button id="menuBtn">☰ Menu</button>
+
+        <nav id="mainNav">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('contato') }}">Contato</a>
+            <a href="{{ url_for('form_orcamento') }}">Faça um Orçamento</a>
+            <a href="{{ url_for('login_cliente') }}">Área do Cliente</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <img src="{{ url_for('static', filename='Imagens/bartender.png') }}">
+        <div class="hero-title">Glamour Service</div>
+        <div class="hero-text">
+            <p>Elegância, profissionalismo e excelência para o seu evento.</p>
+        </div>
+    </div>
+
+    <div class="content" style="padding:40px;text-align:center;">
+        <h2 style="color:#d4af37;">A Melhor Equipe Para o Seu Evento</h2>
+        <p style="max-width:800px;margin:auto;color:#ccc;">
+            A Glamour Service oferece garçons, bartenders e coordenação completa para eventos.
+            Profissionais treinados, apresentação impecável e atendimento de alto nível.
+        </p>
+        <p style="max-width:800px;margin:auto;color:#ccc;">
+            Casamentos, festas corporativas, aniversários ou grandes celebrações —
+            garantimos elegância, responsabilidade e dedicação.
+        </p>
+    </div>
+
+    <!-- ...existing code... (substituí as seções estáticas por cards dinâmicos) -->
+    <section class="cards-wrapper" aria-label="Seções da empresa">
+        <div class="cards-grid" id="cardsGrid">
+          
+        </div>
+    </section>
+    
+
+    <footer>
+        <img src="{{ url_for('static', filename='Imagens/logo.png') }}" alt="Logo Glamour Service">
+        <p>Glamour Service • Excelência e requinte para momentos especiais.</p>
+
+        <!-- Contato discreto -->
+        <p style="color:#b89d44; font-size:14px; margin-top:6px;">
+            📞 (00) 90000-0000 • ✉ contato@glamourservice.com
+        </p>
+
+        <p style="color:#777;font-size:13px;margin-top:6px;">
+            © 2025 Glamour Service. Todos os direitos reservados.
+        </p>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const mainNav = document.getElementById('mainNav');
+
+        menuBtn.addEventListener('click', () => mainNav.classList.toggle('show'));
+        mainNav.addEventListener('click', e => { if (e.target.tagName === "A") mainNav.classList.remove('show') });
+
+        // Dados dos cards (texto preservado)
+        const cards = [
+            {
+                title: "Profissionais Treinados",
+                text: "Equipe cuidadosamente selecionada e preparada para oferecer o melhor atendimento.",
+                bg: "#1c1c1c"
+            },
+            {
+                title: "Apresentação Impecável",
+                text: "Elegância e postura que representam a sofisticação que seu evento merece.",
+                bg: "#2a2a2a"
+            },
+            {
+                title: "Atendimento de Alto Nível",
+                text: "Da recepção ao encerramento, cada detalhe é tratado com cuidado e excelência.",
+                bg: "#3a3a3a"
+            },
+            {
+                title: "Eventos Memoráveis",
+                text: "Seu evento único merece profissionais que entregam experiência e responsabilidade.",
+                bg: "#3a3a3a"
+            }
+        ];
+
+        // Gera os cards dinamicamente
+        const cardsGrid = document.getElementById('cardsGrid');
+        cards.forEach(card => {
+            const el = document.createElement('article');
+            el.className = 'card';
+            el.setAttribute('role', 'article');
+            el.style.background = card.bg;
+            el.innerHTML = `<h3>${card.title}</h3><p>${card.text}</p>`;
+            cardsGrid.appendChild(el);
+        });
+    </script>
+
+</body>
+
+</html>
