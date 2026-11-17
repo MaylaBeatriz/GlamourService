@@ -1,51 +1,89 @@
 # Glamour Service
 
-Projeto desenvolvido para gerenciamento de eventos com garçons e bartenders.  
-O sistema permite organizar clientes, funcionários, eventos, escalas e orçamentos.
+Sistema web para gerenciar uma empresa de garçons e bartenders para eventos. Ele organiza clientes, funcionários, eventos, orçamentos e escalas de trabalho, com uma área institucional para o público e uma área administrativa para a equipe.
 
-## Funcionalidades do Sistema
-- Página inicial institucional
-- Página de contato
-- Área do cliente (visualização de orçamentos e contratos)
-- Área administrativa
-- CRUD de clientes, funcionários, eventos e orçamentos
-- Escalas com seleção de funcionários e horários
-- Controle financeiro básico
+Projeto desenvolvido em equipe no programa **Transforme-se 2025**, da Serasa Experian em parceria com a Gerando Falcões.
 
-## Tecnologias Utilizadas
-- HTML
-- CSS
-- JavaScript
-- MySQL
+## Funcionalidades
 
-## Como Executar
-1. Abra o arquivo **index.html** no navegador.
-2. Para uso com banco de dados futuramente, será necessária integração com backend.
+- Página inicial institucional e página de contato
+- Formulário de pedido de orçamento
+- Área do cliente
+- Área administrativa com cadastro, edição e exclusão (CRUD) de:
+  - funcionários (garçons e bartenders)
+  - eventos
+  - orçamentos
+  - escalas de trabalho, com seleção dos funcionários de cada turno
+- Listagem de clientes
 
-## Autores
-- Yslla Gonçalves  
-- Mayla Rocha  
-- Irlane  
+## Tecnologias
 
----
+- **Backend:** Python e Flask
+- **Banco de dados:** SQLite
+- **Frontend:** HTML, CSS e JavaScript (templates Jinja2)
 
-© Glamour Service
+## Banco de dados
 
-### Windows (PowerShell)
+Banco relacional em SQLite, criado pelo script `backend/init_db.py`. Principais tabelas:
 
-```powershell
+| Tabela | O que guarda |
+|---|---|
+| `usuario` | login e perfil de acesso (Administrador, Financeiro, Coordenador, Cliente, Funcionário) |
+| `cliente` | dados dos clientes, ligados a um usuário |
+| `funcionario` | garçons e bartenders, ligados a um usuário |
+| `eventos` | eventos com data, tipo, número de convidados e endereço |
+| `contrato` | contratos dos clientes, com status aberto ou fechado |
+| `orcamento` | pedidos de orçamento ligados a um contrato |
+| `pagamento` | pagamentos de cada orçamento (boleto, cartão ou transferência) |
+| `escala` | turnos de trabalho de cada evento |
+| `escala_funcionario` | quais funcionários trabalham em cada turno |
 
-# 1- instalar o Python
-# 2 - Instalar o  VS Code
+As relações usam chaves estrangeiras com exclusão em cascata, e os campos com valores fixos (perfil, especialidade, status, forma de pagamento) são validados com `CHECK`.
 
-python -m venv .venv # 3 - criar ambiente virtual
+## Estrutura
 
-.venv/scripts/activate # 4 - Ativar ambiente virtual
+```
+GlamourService/
+├── backend/
+│   ├── app.py          # rotas e regras do sistema (Flask)
+│   ├── database.py     # conexão com o SQLite
+│   ├── init_db.py      # cria as tabelas do banco
+│   ├── seed_db.py      # popula o banco com dados de exemplo
+│   └── db_siteGlamour.db
+└── frontend/
+    ├── templates/      # páginas HTML
+    └── static/         # CSS, JavaScript e imagens
+```
 
-pip install flask # 5 - Instalar o Flask
+## Como executar
 
-python db_smarteventos.py   # 6 - cria/zera o banco db_smarteventos.db
+Pré-requisito: Python 3 instalado.
 
-python app.py       # 7 - Rodar o software - inicia o servidor
+```bash
+cd backend
 
-# Obs: Para parar o servidor CTRL + C
+# criar e ativar o ambiente virtual
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # Linux/macOS
+
+# instalar o Flask
+pip install flask
+
+# (opcional) recriar o banco do zero e popular com dados de exemplo
+python init_db.py
+python seed_db.py
+
+# rodar o servidor
+python app.py
+```
+
+Depois acesse `http://127.0.0.1:5000` no navegador. Para parar o servidor, use `Ctrl + C`.
+
+O repositório já inclui o banco `db_siteGlamour.db` populado, então os passos de recriar o banco são opcionais. Rode os comandos de dentro da pasta `backend`, porque o caminho do banco é relativo a ela.
+
+## Autoras
+
+- **Mayla Rocha** – modelagem básica do banco de dados
+- **Yslla Gonçalves**
+- **Irlane Silva Santos**
